@@ -1,4 +1,7 @@
 # 🧠 Semantic Segmentation in AR (Unity + Niantic Lightship)
+
+> A real-time Augmented Reality experience powered by Semantic Segmentation to make AR environment-aware and smarter.  
+> Built with Unity3D and Niantic's Lightship ARDK.
 ---
 
 ## 📽️ Demo

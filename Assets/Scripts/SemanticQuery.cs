@@ -1,15 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Niantic.Lightship.AR.Semantics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
-//This script was originally provided by Niantic and modified by Alive Studios
-//https://lightship.dev/docs/ardk/how-to/ar/query_semantics_real_objects/
-public class SemanticQuery : MonoBehaviour
+public class SemanticQuerying : MonoBehaviour
 {
     public ARCameraManager _cameraMan;
     public ARSemanticSegmentationManager _semanticMan;
@@ -20,59 +15,57 @@ public class SemanticQuery : MonoBehaviour
 
     private string _channel = "ground";
 
-    [SerializeField] private Transform spawnObjectParent;
-    public List<ChannelToObject> ChannelToObjects;
-    
-
-    private void OnEnable()
+    void OnEnable()
     {
-        _image.enabled = false;
-        _cameraMan.frameReceived += CameraManOnframeReceived;
+        _cameraMan.frameReceived += OnCameraFrameUpdate;
     }
 
-    private void CameraManOnframeReceived(ARCameraFrameEventArgs args)
+    private void OnDisable()
+    {
+        _cameraMan.frameReceived -= OnCameraFrameUpdate;
+    }
+
+    private void OnCameraFrameUpdate(ARCameraFrameEventArgs args)
     {
         if (!_semanticMan.subsystem.running)
         {
             return;
         }
 
-
+        //get the semantic texture
         Matrix4x4 mat = Matrix4x4.identity;
         var texture = _semanticMan.GetSemanticChannelTexture(_channel, out mat);
 
         if (texture)
         {
-            Matrix4x4 cameraMatrix = args.displayMatrix ?? Matrix4x4.identity;
+            //the texture needs to be aligned to the screen so get the display matrix
+            //and use a shader that will rotate/scale things.
             _image.material = _material;
             _image.material.SetTexture("_SemanticTex", texture);
             _image.material.SetMatrix("_SemanticMat", mat);
         }
-
     }
 
-    private float timer = 0.0f;
+    private float _timer = 0.0f;
+
     void Update()
     {
-        if(!_semanticMan.subsystem.running)
+        if (!_semanticMan.subsystem.running)
         {
             return;
         }
 
-        if (Input.GetMouseButtonDown(0) || Input.touches.Length > 0)
+        //Unity Editor vs On Device
+        if (Input.GetMouseButtonDown(0) || (Input.touches.Length > 0))
         {
             var pos = Input.mousePosition;
-
 
             if (pos.x > 0 && pos.x < Screen.width)
             {
                 if (pos.y > 0 && pos.y < Screen.height)
                 {
-                    timer += Time.deltaTime;
-                    _image.enabled = true;
-
-
-                    if (timer > 0.05f)
+                    _timer += Time.deltaTime;
+                    if (_timer > 0.05f)
                     {
                         var list = _semanticMan.GetChannelNamesAt((int)pos.x, (int)pos.y);
 
@@ -80,38 +73,16 @@ public class SemanticQuery : MonoBehaviour
                         {
                             _channel = list[0];
                             _text.text = _channel;
-
-                            foreach (var channelToObject in ChannelToObjects)
-                            {
-                                if (channelToObject.channel == _channel)
-                                {
-                                    Debug.Log($"The channel {_channel} has been detected and will spawn an object!");
-                                    GameObject newObject = Instantiate(channelToObject.GameObject, pos,
-                                        Quaternion.identity, spawnObjectParent);
-                                    Destroy(newObject, 3f);
-                                }
-                            }
                         }
                         else
                         {
                             _text.text = "?";
                         }
 
-                        timer = 0.0f;
-
+                        _timer = 0.0f;
                     }
-                    
                 }
             }
-
         }
-        
     }
-}
-
-[System.Serializable]
-public struct ChannelToObject
-{
-    public string channel;
-    public GameObject GameObject;
 }

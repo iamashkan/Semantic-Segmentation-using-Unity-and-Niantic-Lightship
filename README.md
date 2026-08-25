@@ -58,7 +58,10 @@ This project demonstrates how to apply **semantic segmentation** in an AR experi
 ### Prerequisites
 
 - Unity 3D (with Android/iOS build support)
-- Niantic Lightship ARDK (get it from [Lightship.dev](https://lightship.dev/))
+- Niantic Lightship ARDK — **this link is dead**: `lightship.dev` was decommissioned in
+  February 2026. The current SDK is [Niantic Spatial NSDK](https://www.nianticspatial.com/docs/nsdk/setup/),
+  and porting this project would start from the
+  [migration guide](https://www.nianticspatial.com/docs/nsdk/migration_guide/).
 - AR-capable device (ARKit for iOS or ARCore for Android)
 
 ### Setup Instructions

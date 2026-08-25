@@ -10,6 +10,17 @@
 
 ---
 
+> [!NOTE]
+> **Built in 2024 on Lightship ARDK 3.x, which Niantic has since retired.**
+> `lightship.dev` was decommissioned on **27 February 2026**, ARDK 3.x is deprecated, and
+> Shared AR stopped functioning on **1 May 2026**. The platform moved to
+> [Niantic Spatial NSDK 4.0](https://www.nianticspatial.com/docs/nsdk/migration_guide/),
+> which still provides scene segmentation, depth, occlusion, meshing and VPS across Unity,
+> Swift and Kotlin — critical fixes for 3.x run only until 28 February 2027.
+>
+> This repository is kept as-is for the shader and segmentation-channel work, which is the
+> part worth reading. It will not build against a current SDK without migrating to NSDK 4.0.
+
 ## 🔍 Overview
 
 This project demonstrates how to apply **semantic segmentation** in an AR experience using **Niantic Lightship ARDK** and **Unity**. The app classifies real-world surfaces like sky, ground, trees, and buildings and uses that information to influence AR interactions.
